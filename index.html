@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOS | Spring Box</title>
+    <style>
+        :root {
+            --bg-color: #f4f1ea;
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --text-color: #5a5a5a;
+            --accent-color: #a89a8e;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'PingFang SC', 'STHeiti', 'Microsoft YaHei', serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+
+        /* 侧边悬浮工具栏 - 把丑按钮藏在这里 */
+        .side-tools {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .tool-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .tool-icon:hover {
+            background: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* 顶部区域 - 限制宽度，拒绝“虚胖” */
+        .header {
+            margin-top: 60px;
+            width: 85%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 200;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .input-area {
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            box-sizing: border-box;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: var(--text-color);
+            resize: none;
+            line-height: 1.6;
+            font-family: inherit;
+        }
+
+        .save-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            float: right;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        /* 主题切换按钮 - 变得像小巧的装饰品 */
+        .theme-bar {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .theme-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        /* 画廊展示 - 紧凑且居中 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            width: 85%;
+            max-width: 600px;
+            margin-top: 50px;
+            padding-bottom: 100px;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            transition: 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h3 {
+            margin: 0 0 12px 0;
+            font-size: 11px;
+            color: var(--accent-color);
+            opacity: 0.6;
+            font-weight: 400;
+        }
+
+        .card p {
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 0;
+            word-break: break-all;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            opacity: 0.2;
+            transition: 0.3s;
+        }
+
+        .delete-btn:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="side-tools">
+        <div class="tool-icon" onclick="exportNotes()" title="导出备份">💾</div>
+        <div class="tool-icon" onclick="importNotes()" title="恢复数据">📥</div>
+    </div>
+
+    <div class="header">
+        <div class="logo">HOS SPRING BOX</div>
+        
+        <div class="input-area">
+            <textarea id="noteInput" placeholder="在此刻捕捉灵感..."></textarea>
+            <button class="save-btn" onclick="saveNote()">投递灵感</button>
+        </div>
+
+        <div class="theme-bar">
+            <div class="theme-dot" style="background: #f4f1ea;" onclick="setTheme('default')" title="经典驼"></div>
+            <div class="theme-dot" style="background: #e8f0f2;" onclick="setTheme('lagoon')" title="泻湖蓝"></div>
+            <div class="theme-dot" style="background: #f2ece9;" onclick="setTheme('rose')" title="暮色玫瑰"></div>
+        </div>
+    </div>
+
+    <div id="gallery" class="gallery"></div>
+
+    <script>
+        // 核心数据逻辑
+        let notes = JSON.parse(localStorage.getItem('hos_notes')) || [];
+        renderNotes();
+
+        function saveNote() {
+            const input = document.getElementById('noteInput');
+            if (!input.value.trim()) return;
+
+            const newNote = {
+                id: Date.now(),
+                content: input.value,
+                date: new Date().toLocaleString('zh-CN')
+            };
+
+            notes.unshift(newNote);
+            updateStorage();
+            input.value = '';
+            renderNotes();
+        }
+
+        function deleteNote(id) {
+            if(confirm('确定要删除这段灵感吗？')) {
+                notes = notes.filter(note => note.id !== id);
+                updateStorage();
+                renderNotes();
+            }
+        }
+
+        function renderNotes() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = notes.map(note => `
+                <div class="card">
+                    <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
+                    <h3>${note.date}</h3>
+                    <p>${note.content}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateStorage() {
+            localStorage.setItem('hos_notes', JSON.stringify(notes));
+        }
+
+        function setTheme(theme) {
+            const themes = {
+                default: { bg: '#f4f1ea', accent: '#a89a8e' },
+                lagoon: { bg: '#e8f0f2', accent: '#7a96a2' },
+                rose: { bg: '#f2ece9', accent: '#b58d88' }
+            };
+            document.documentElement.style.setProperty('--bg-color', themes[theme].bg);
+            document.documentElement.style.setProperty('--accent-color', themes[theme].accent);
+        }
+
+        // 备份逻辑
+        function exportNotes() {
+            const data = localStorage.getItem('hos_notes');
+            if(!data || data === '[]') return alert('箱子里还是空的呢');
+            const blob = new Blob([data], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SpringBox_Backup_${new Date().toLocaleDateString()}.txt`;
+            a.click();
+        }
+
+        function importNotes() {
+            const input = prompt("请粘贴你的备份内容：");
+            if (input) {
+                try {
+                    JSON.parse(input); 
+                    localStorage.setItem('hos_notes', input);
+                    location.reload();
+                } catch(e) {
+                    alert("格式好像不对，没法恢复呢");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
