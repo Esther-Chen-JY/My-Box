@@ -5,109 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Esther's Box</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22'Songti SC', serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22'Songti SC', serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
 
     <style>
         :root { --bg-color: #f4f1ea; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #a89a8e; --secondary-btn: #d4c8be; }
-        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'Songti SC', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 30px;}
         
-        /* 顶部区域大重构 */
-        .header-container {
-            margin-top: 40px;
-            width: 85%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; } /* 消除蓝光，防止布局溢出 */
 
-        .main-title {
-            font-size: 24px;
-            letter-spacing: 4px;
-            color: var(--text-color);
-            margin: 0;
-            text-transform: uppercase;
-            font-weight: normal;
-        }
-
-        /* 新的工具栏：放主题切换和导入导出 */
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .tool-btn {
-            background: var(--glass-bg);
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 6px 12px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 12px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(5px);
-        }
-
-        /* 输入卡片区域 - 保证不被遮挡 */
-        .input-card {
-            margin-top: 30px;
-            width: 85%;
-            max-width: 600px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STSong', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 50px; }
         
-        textarea { width: 100%; height: 100px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
-        textarea::placeholder { color: rgba(90, 90, 90, 0.5); }
-        
-        .post-btn {
-            align-self: flex-end;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-size: 14px;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(168, 154, 142, 0.3);
-            transition: 0.3s;
-        }
-        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 154, 142, 0.4); }
+        .header-container { margin-top: 40px; width: 90%; max-width: 600px; text-align: center; }
+        .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 20px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
 
-        /* 画廊 */
-        .gallery { display: flex; flex-direction: column; gap: 20px; width: 85%; max-width: 600px; margin-top: 40px; }
-        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .card-date { margin: 0 0 15px 0; font-size: 12px; color: var(--accent-color); letter-spacing: 1px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        .tool-btn { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.08); padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; color: var(--text-color); backdrop-filter: blur(5px); transition: 0.2s; }
+        .tool-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.6); }
+
+        .input-card { width: 90%; max-width: 600px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
+        textarea { width: 100%; height: 120px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        .post-btn { align-self: flex-end; background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 18px; font-size: 13px; letter-spacing: 1px; cursor: pointer; }
+
+        .gallery { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 600px; margin-top: 30px; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-date { font-size: 11px; color: var(--accent-color); margin-bottom: 10px; letter-spacing: 1px; }
         .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
-        .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.3; font-size: 14px; padding: 5px; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.2; font-size: 14px; padding: 5px; }
     </style>
 </head>
 <body>
 
     <div class="header-container">
         <h1 class="main-title">Esther's Box</h1>
-        
         <div class="toolbar">
             <button class="tool-btn" onclick="setTheme('default')">经典驼</button>
             <button class="tool-btn" onclick="setTheme('lagoon')">泻湖蓝</button>
             <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
-            <button class="tool-btn" style="background: var(--secondary-btn); color: white;">💾 导出</button>
-            <button class="tool-btn" style="background: var(--secondary-btn); color: white;">📥 导入</button>
+            <button class="tool-btn" onclick="exportNotes()" style="background: var(--accent-color); color: white; border:none;">💾 导出备份</button>
+            <button class="tool-btn" onclick="document.getElementById('fileInput').click()" style="background: var(--accent-color); color: white; border:none;">📥 导入恢复</button>
+            <input type="file" id="fileInput" style="display:none" onchange="importNotes(event)">
         </div>
     </div>
 
@@ -132,12 +69,6 @@
             renderNotes();
         }
 
-        function deleteNote(id) {
-            notes = notes.filter(note => note.id !== id);
-            localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
-            renderNotes();
-        }
-
         function renderNotes() {
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = notes.map(note => `
@@ -149,6 +80,14 @@
             `).join('');
         }
 
+        function deleteNote(id) {
+            if(confirm('确定要删除这段灵感吗？')) {
+                notes = notes.filter(note => note.id !== id);
+                localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
+                renderNotes();
+            }
+        }
+
         function setTheme(theme) {
             const root = document.documentElement;
             const themes = {
@@ -158,6 +97,47 @@
             };
             root.style.setProperty('--bg-color', themes[theme].bg);
             root.style.setProperty('--accent-color', themes[theme].accent);
+        }
+
+        // --- 核心搬运逻辑 ---
+        function exportNotes() {
+            if (notes.length === 0) return alert('箱子里还是空的呢');
+            const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Esthers_Box_Backup_${new Date().toLocaleDateString()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importNotes(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedNotes = JSON.parse(e.target.result);
+                    if (confirm(`发现 ${importedNotes.length} 条灵感，要合并到现在的箱子里吗？`)) {
+                        notes = [...importedNotes, ...notes]; // 合并新老数据
+                        // 去重逻辑（防止多次导入重复内容）
+                        const uniqueIds = new Set();
+                        notes = notes.filter(note => {
+                            if (!uniqueIds.has(note.id)) {
+                                uniqueIds.add(note.id);
+                                return true;
+                            }
+                            return false;
+                        });
+                        localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
+                        renderNotes();
+                        alert('搬家成功！');
+                    }
+                } catch (err) {
+                    alert('文件格式好像不对哦');
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
