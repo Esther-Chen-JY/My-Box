@@ -2,67 +2,139 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Esther's Box</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22'Songti SC', serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22'Songti SC', serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
+
     <style>
-        :root { --bg-color: #f4f1ea; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #a89a8e; }
-        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STHeiti', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; }
+        :root { --bg-color: #f4f1ea; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #a89a8e; --secondary-btn: #d4c8be; }
+        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'Songti SC', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 30px;}
         
-        .side-tools { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
-        .tool-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
-        .tool-btn:hover { background: white; transform: scale(1.1); }
+        /* 顶部区域大重构 */
+        .header-container {
+            margin-top: 40px;
+            width: 85%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
 
-        .header { margin-top: 60px; width: 85%; max-width: 450px; display: flex; flex-direction: column; align-items: center; }
-        .logo { font-size: 20px; letter-spacing: 6px; margin-bottom: 35px; font-weight: 200; opacity: 0.8; text-transform: uppercase; }
+        .main-title {
+            font-size: 24px;
+            letter-spacing: 4px;
+            color: var(--text-color);
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        /* 新的工具栏：放主题切换和导入导出 */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tool-btn {
+            background: var(--glass-bg);
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* 输入卡片区域 - 保证不被遮挡 */
+        .input-card {
+            margin-top: 30px;
+            width: 85%;
+            max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
         
-        .input-area { width: 100%; background: var(--glass-bg); backdrop-filter: blur(20px); padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); box-sizing: border-box; }
-        textarea { width: 100%; height: 100px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; line-height: 1.6; font-family: inherit; }
-        .save-btn { background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; float: right; font-size: 12px; letter-spacing: 1px; margin-top: 10px; }
+        textarea { width: 100%; height: 100px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        textarea::placeholder { color: rgba(90, 90, 90, 0.5); }
+        
+        .post-btn {
+            align-self: flex-end;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(168, 154, 142, 0.3);
+            transition: 0.3s;
+        }
+        .post-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 154, 142, 0.4); }
 
-        .theme-bar { margin-top: 25px; display: flex; gap: 12px; justify-content: center; }
-        .theme-dot { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.3s; }
-
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 85%; max-width: 600px; margin-top: 50px; padding-bottom: 100px; }
-        .card { background: var(--glass-bg); backdrop-filter: blur(15px); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.3); position: relative; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card h3 { margin: 0 0 12px 0; font-size: 10px; color: var(--accent-color); opacity: 0.5; font-weight: 400; }
-        .card p { font-size: 15px; line-height: 1.8; margin: 0; font-weight: 300; }
-        .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.2; }
+        /* 画廊 */
+        .gallery { display: flex; flex-direction: column; gap: 20px; width: 85%; max-width: 600px; margin-top: 40px; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card-date { margin: 0 0 15px 0; font-size: 12px; color: var(--accent-color); letter-spacing: 1px; }
+        .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.3; font-size: 14px; padding: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="side-tools">
-        <div class="tool-btn" onclick="exportNotes()">💾</div>
-        <div class="tool-btn" onclick="importNotes()">📥</div>
+    <div class="header-container">
+        <h1 class="main-title">Esther's Box</h1>
+        
+        <div class="toolbar">
+            <button class="tool-btn" onclick="setTheme('default')">经典驼</button>
+            <button class="tool-btn" onclick="setTheme('lagoon')">泻湖蓝</button>
+            <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
+            <button class="tool-btn" style="background: var(--secondary-btn); color: white;">💾 导出</button>
+            <button class="tool-btn" style="background: var(--secondary-btn); color: white;">📥 导入</button>
+        </div>
     </div>
 
-    <div class="header">
-        <div class="logo">ESTHER'S BOX</div>
-        <div class="input-area">
-            <textarea id="noteInput" placeholder="在此刻，捕捉那些流动的灵感..."></textarea>
-            <button class="save-btn" onclick="saveNote()">POST</button>
-        </div>
-        <div class="theme-bar">
-            <div class="theme-dot" style="background: #f4f1ea;" onclick="setTheme('default')"></div>
-            <div class="theme-dot" style="background: #e8f0f2;" onclick="setTheme('lagoon')"></div>
-            <div class="theme-dot" style="background: #f2ece9;" onclick="setTheme('rose')"></div>
-        </div>
+    <div class="input-card">
+        <textarea id="noteInput" placeholder="在此刻，捕捉那些流动的灵感..."></textarea>
+        <button class="post-btn" onclick="saveNote()">POST</button>
     </div>
 
     <div id="gallery" class="gallery"></div>
 
     <script>
-        let notes = JSON.parse(localStorage.getItem('hos_notes')) || [];
+        let notes = JSON.parse(localStorage.getItem('esthers_box_notes')) || [];
         renderNotes();
 
         function saveNote() {
             const input = document.getElementById('noteInput');
             if (!input.value.trim()) return;
-            const newNote = { id: Date.now(), content: input.value, date: new Date().toLocaleString('zh-CN') };
+            const newNote = { id: Date.now(), content: input.value, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
             notes.unshift(newNote);
-            localStorage.setItem('hos_notes', JSON.stringify(notes));
+            localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
             input.value = '';
+            renderNotes();
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(note => note.id !== id);
+            localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
             renderNotes();
         }
 
@@ -71,47 +143,21 @@
             gallery.innerHTML = notes.map(note => `
                 <div class="card">
                     <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
-                    <h3>${note.date}</h3>
-                    <p>${note.content}</p>
+                    <div class="card-date">${note.date}</div>
+                    <div class="card-content">${note.content}</div>
                 </div>
             `).join('');
         }
 
-        function deleteNote(id) {
-            if(confirm('要删除这段灵感吗？')) {
-                notes = notes.filter(n => n.id !== id);
-                localStorage.setItem('hos_notes', JSON.stringify(notes));
-                renderNotes();
-            }
-        }
-
         function setTheme(theme) {
+            const root = document.documentElement;
             const themes = {
                 default: { bg: '#f4f1ea', accent: '#a89a8e' },
                 lagoon: { bg: '#e8f0f2', accent: '#7a96a2' },
                 rose: { bg: '#f2ece9', accent: '#b58d88' }
             };
-            document.documentElement.style.setProperty('--bg-color', themes[theme].bg);
-            document.documentElement.style.setProperty('--accent-color', themes[theme].accent);
-        }
-
-        function exportNotes() {
-            const data = localStorage.getItem('hos_notes');
-            if(!data || data === '[]') return;
-            const blob = new Blob([data], {type: 'text/plain'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Esther_Archive_${new Date().toLocaleDateString()}.txt`;
-            a.click();
-        }
-
-        function importNotes() {
-            const input = prompt("粘贴备份内容：");
-            if (input) {
-                localStorage.setItem('hos_notes', input);
-                location.reload();
-            }
+            root.style.setProperty('--bg-color', themes[theme].bg);
+            root.style.setProperty('--accent-color', themes[theme].accent);
         }
     </script>
 </body>
