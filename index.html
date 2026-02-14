@@ -9,48 +9,269 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f2ece9%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23b58d88%22>EB</text></svg>">
 
     <style>
-        :root { --bg-color: #f2ece9; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #b58d88; }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STSong', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 50px; overflow-x: hidden; }
+        /* 低饱和度色彩体系 - 默认：暮色玫瑰 */
+        :root { 
+            --bg-color: #f2ece9; 
+            --glass-bg: rgba(255, 255, 255, 0.4); 
+            --text-color: #5a5a5a; 
+            --accent-color: #b58d88; 
+        }
+
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box; 
+        }
+
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'PingFang SC', 'STSong', serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            transition: all 0.5s ease; 
+            padding-bottom: 50px; 
+            overflow-x: hidden; 
+        }
         
-        .header-container { margin-top: 40px; width: 92%; max-width: 600px; text-align: center; }
-        .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 25px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
+        /* 顶部标题区域 */
+        .header-container { 
+            margin-top: 40px; 
+            width: 92%; 
+            max-width: 600px; 
+            text-align: center; 
+        }
 
-        .search-bar { width: 100%; margin-bottom: 20px; }
-        .search-bar input { width: 100%; padding: 14px 20px; border-radius: 25px; border: 1px solid rgba(0,0,0,0.05); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color); outline: none; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .main-title { 
+            font-size: 26px; 
+            letter-spacing: 5px; 
+            color: var(--text-color); 
+            margin-bottom: 25px; 
+            text-transform: uppercase; 
+            font-weight: normal; 
+            font-family: 'STSong', serif; 
+        }
 
-        .toolbar { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
-        .tool-btn { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.08); padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; color: var(--text-color); backdrop-filter: blur(5px); white-space: nowrap; flex-grow: 1; max-width: calc(33% - 8px); text-align: center; }
+        /* 搜索框 */
+        .search-bar { 
+            width: 100%; 
+            margin-bottom: 20px; 
+        }
+
+        .search-bar input { 
+            width: 100%; 
+            padding: 14px 20px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(0,0,0,0.05); 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(10px); 
+            color: var(--text-color); 
+            outline: none; 
+            font-size: 14px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+        }
+
+        /* 工具栏适配优化 */
+        .toolbar { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            justify-content: center; 
+            margin-bottom: 30px; 
+        }
+
+        .tool-btn { 
+            background: var(--glass-bg); 
+            border: 1px solid rgba(0,0,0,0.08); 
+            padding: 8px 12px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            color: var(--text-color); 
+            backdrop-filter: blur(5px); 
+            white-space: nowrap; 
+            flex-grow: 1; 
+            max-width: calc(33% - 8px); 
+            text-align: center; 
+        }
         
         @media (max-width: 480px) {
             .tool-btn { max-width: calc(50% - 8px); }
             .tool-btn.func-btn { background: var(--accent-color); color: white; border: none; }
         }
 
-        .input-card { width: 92%; max-width: 600px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 22px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
-        textarea { width: 100%; height: 110px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        /* 输入区域卡片 */
+        .input-card { 
+            width: 92%; 
+            max-width: 600px; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(10px); 
+            padding: 22px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.5); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+
+        .title-input { 
+            width: 100%; 
+            background: transparent; 
+            border: none; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            outline: none; 
+            font-size: 18px; 
+            font-family: 'STSong', serif; 
+            color: var(--text-color); 
+            padding: 5px 0; 
+            font-weight: bold; 
+        }
+
+        textarea { 
+            width: 100%; 
+            height: 110px; 
+            background: transparent; 
+            border: none; 
+            outline: none; 
+            font-size: 16px; 
+            color: var(--text-color); 
+            resize: none; 
+            font-family: inherit; 
+            line-height: 1.6; 
+        }
         
-        .tag-picker { display: flex; gap: 8px; flex-wrap: wrap; }
-        .label-tag { font-size: 11px; padding: 6px 14px; border-radius: 15px; background: rgba(0,0,0,0.03); cursor: pointer; border: 1px solid transparent; transition: 0.3s; color: #777; }
-        .label-tag.active { background: var(--accent-color); color: white; }
+        /* 标签选择 */
+        .tag-picker { 
+            display: flex; 
+            gap: 8px; 
+            flex-wrap: wrap; 
+        }
 
-        .btn-group { display: flex; justify-content: flex-end; gap: 10px; }
-        .post-btn { background: var(--accent-color); color: white; border: none; padding: 12px 30px; border-radius: 20px; font-size: 13px; letter-spacing: 1px; cursor: pointer; }
-        .cancel-btn { background: rgba(0,0,0,0.05); color: #777; border: none; padding: 12px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; display: none; }
+        .label-tag { 
+            font-size: 11px; 
+            padding: 6px 14px; 
+            border-radius: 15px; 
+            background: rgba(0,0,0,0.03); 
+            cursor: pointer; 
+            border: 1px solid transparent; 
+            transition: 0.3s; 
+            color: #777; 
+        }
 
-        .gallery { display: flex; flex-direction: column; gap: 18px; width: 92%; max-width: 600px; margin-top: 35px; }
-        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 22px; border: 1px solid rgba(255,255,255,0.3); position: relative; }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .card-meta { display: flex; flex-direction: column; gap: 4px; }
-        .card-date { font-size: 11px; color: var(--accent-color); letter-spacing: 0.5px; opacity: 0.8; }
-        .card-tag { font-size: 9px; padding: 2px 8px; background: rgba(0,0,0,0.05); border-radius: 8px; color: #999; align-self: flex-start; }
-        
-        /* 辅助按钮组（复制、编辑、删除） */
-        .action-btns { display: flex; gap: 12px; color: var(--accent-color); opacity: 0.6; }
-        .action-icon { cursor: pointer; font-size: 13px; padding: 4px; }
-        .action-icon:hover { opacity: 1; }
+        .label-tag.active { 
+            background: var(--accent-color); 
+            color: white; 
+        }
 
-        .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; color: #444; }
+        /* 操作按钮组 */
+        .btn-group { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+        }
+
+        .post-btn { 
+            background: var(--accent-color); 
+            color: white; 
+            border: none; 
+            padding: 12px 30px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            letter-spacing: 1px; 
+            cursor: pointer; 
+        }
+
+        .cancel-btn { 
+            background: rgba(0,0,0,0.05); 
+            color: #777; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            cursor: pointer; 
+            display: none; 
+        }
+
+        /* 画廊展示区域 */
+        .gallery { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px; 
+            width: 92%; 
+            max-width: 600px; 
+            margin-top: 35px; 
+        }
+
+        .card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(8px); 
+            border-radius: 18px; 
+            padding: 22px; 
+            border: 1px solid rgba(255,255,255,0.3); 
+            position: relative; 
+        }
+
+        .card-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 15px; 
+        }
+
+        .card-meta { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+        }
+
+        .card-date { 
+            font-size: 11px; 
+            color: var(--accent-color); 
+            letter-spacing: 0.5px; 
+            opacity: 0.8; 
+        }
+
+        .card-tag { 
+            font-size: 9px; 
+            padding: 2px 8px; 
+            background: rgba(0,0,0,0.05); 
+            border-radius: 8px; 
+            color: #999; 
+            align-self: flex-start; 
+        }
+
+        .action-btns { 
+            display: flex; 
+            gap: 12px; 
+            color: var(--accent-color); 
+            opacity: 0.6; 
+        }
+
+        .action-icon { 
+            cursor: pointer; 
+            font-size: 13px; 
+            padding: 4px; 
+        }
+
+        /* 加粗后的卡片标题 */
+        .card-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            font-family: 'STSong', serif; 
+            margin-bottom: 12px; 
+            color: #333; 
+            letter-spacing: 1px; 
+        }
+
+        .card-content { 
+            font-size: 15px; 
+            line-height: 1.7; 
+            white-space: pre-wrap; 
+            color: #555; 
+        }
     </style>
 </head>
 <body>
@@ -71,6 +292,7 @@
     </div>
 
     <div class="input-card">
+        <input type="text" id="titleInput" class="title-input" placeholder="起个小标题吧...">
         <textarea id="noteInput" placeholder="捕捉此刻流动的灵感..."></textarea>
         <div class="tag-picker" id="tagPicker">
             <div class="label-tag active" onclick="selectTag(this)">碎碎念</div>
@@ -79,7 +301,7 @@
             <div class="label-tag" onclick="selectTag(this)">审美档案</div>
         </div>
         <div class="btn-group">
-            <button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()">取消修改</button>
+            <button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()">取消</button>
             <button id="postBtn" class="post-btn" onclick="saveNote()">POST</button>
         </div>
     </div>
@@ -87,87 +309,137 @@
     <div id="gallery" class="gallery"></div>
 
     <script>
+        // 初始化数据
         let notes = JSON.parse(localStorage.getItem('esthers_box_notes')) || [];
         let currentTag = "碎碎念";
-        let editId = null; // 用于追踪正在编辑的卡片
+        let editId = null;
 
+        // 首次加载渲染
         renderNotes(notes);
 
+        // 标签切换逻辑
         function selectTag(el) {
-            document.querySelectorAll('.label-tag').forEach(tag => tag.classList.remove('active'));
+            document.querySelectorAll('.label-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
             el.classList.add('active');
             currentTag = el.innerText;
         }
 
+        // 保存/更新笔记逻辑
         function saveNote() {
-            const input = document.getElementById('noteInput');
-            if (!input.value.trim()) return;
+            const titleInput = document.getElementById('titleInput');
+            const noteInput = document.getElementById('noteInput');
+            
+            if (!noteInput.value.trim()) return;
+
+            const titleValue = titleInput.value.trim() || "无题";
 
             if (editId) {
-                // 更新现有笔记
+                // 编辑模式：寻找旧数据并替换
                 const index = notes.findIndex(n => n.id === editId);
                 if (index !== -1) {
-                    notes[index].content = input.value;
+                    notes[index].title = titleValue;
+                    notes[index].content = noteInput.value;
                     notes[index].tag = currentTag;
                 }
                 editId = null;
                 document.getElementById('postBtn').innerText = 'POST';
                 document.getElementById('cancelBtn').style.display = 'none';
             } else {
-                // 创建新笔记
-                const newNote = { id: Date.now(), content: input.value, tag: currentTag, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
+                // 新增模式：推入数组首位
+                const newNote = { 
+                    id: Date.now(), 
+                    title: titleValue, 
+                    content: noteInput.value, 
+                    tag: currentTag, 
+                    date: new Date().toLocaleString('zh-CN', { hour12: false }) 
+                };
                 notes.unshift(newNote);
             }
 
+            // 同步到本地存储并刷新界面
             localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
-            input.value = '';
+            titleInput.value = '';
+            noteInput.value = '';
             renderNotes(notes);
         }
 
+        // 进入编辑模式
         function editNote(id) {
             const note = notes.find(n => n.id === id);
             if (!note) return;
-            
-            editId = id;
-            const input = document.getElementById('noteInput');
-            input.value = note.content;
-            input.focus();
 
-            // 自动同步标签
+            editId = id;
+            document.getElementById('titleInput').value = note.title === "无题" ? "" : note.title;
+            document.getElementById('noteInput').value = note.content;
+            document.getElementById('noteInput').focus();
+
+            // 同步标签激活状态
             const tags = document.querySelectorAll('.label-tag');
             tags.forEach(t => {
-                if (t.innerText === note.tag) {
-                    selectTag(t);
-                }
+                if (t.innerText === note.tag) selectTag(t);
             });
 
+            // 切换按钮状态
             document.getElementById('postBtn').innerText = 'UPDATE';
             document.getElementById('cancelBtn').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // 取消编辑
         function cancelEdit() {
             editId = null;
+            document.getElementById('titleInput').value = '';
             document.getElementById('noteInput').value = '';
             document.getElementById('postBtn').innerText = 'POST';
             document.getElementById('cancelBtn').style.display = 'none';
         }
 
-        function copyNote(content) {
-            navigator.clipboard.writeText(content).then(() => {
-                alert('灵感已复制到剪贴板 ✨');
-            });
+        // 强力复制功能 (包含 Fallback 方案)
+        function copyNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            const fullText = (note.title !== "无题" ? `【${note.title}】\n` : "") + note.content;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullText).then(() => {
+                    alert('灵感已复制到剪贴板 ✨');
+                }).catch(() => {
+                    fallbackCopy(fullText);
+                });
+            } else {
+                fallbackCopy(fullText);
+            }
         }
 
+        // 备用复制方法
+        function fallbackCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('灵感已复制到剪贴板 ✨');
+            } catch (err) {
+                alert('复制失败，请手动选择文字');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // 搜索过滤
         function filterNotes() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = notes.filter(note => 
                 note.content.toLowerCase().includes(searchTerm) || 
-                note.tag.toLowerCase().includes(searchTerm)
+                note.tag.toLowerCase().includes(searchTerm) || 
+                (note.title && note.title.toLowerCase().includes(searchTerm))
             );
             renderNotes(filtered);
         }
 
+        // 核心渲染函数
         function renderNotes(data) {
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = data.map(note => `
@@ -178,24 +450,27 @@
                             <div class="card-tag">${note.tag}</div>
                         </div>
                         <div class="action-btns">
-                            <span class="action-icon" title="复制" onclick="copyNote(\`${note.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)">📋</span>
+                            <span class="action-icon" title="复制" onclick="copyNote(${note.id})">📋</span>
                             <span class="action-icon" title="编辑" onclick="editNote(${note.id})">✎</span>
                             <span class="action-icon" title="删除" onclick="deleteNote(${note.id})">✕</span>
                         </div>
                     </div>
+                    ${note.title && note.title !== "无题" ? `<div class="card-title">${note.title}</div>` : ""}
                     <div class="card-content">${note.content}</div>
                 </div>
             `).join('');
         }
 
+        // 删除笔记
         function deleteNote(id) {
-            if(confirm('要撕掉这段灵感吗？')) {
+            if(confirm('要删除这段珍贵的灵感吗？')) {
                 notes = notes.filter(note => note.id !== id);
                 localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
                 renderNotes(notes);
             }
         }
 
+        // 主题切换逻辑
         function setTheme(theme) {
             const root = document.documentElement;
             const themes = {
@@ -207,27 +482,36 @@
             root.style.setProperty('--accent-color', themes[theme].accent);
         }
 
+        // 导出备份
         function exportNotes() {
             if (notes.length === 0) return;
             const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
+            a.href = url;
             a.download = `Esthers_Box_Archive.json`;
             a.click();
+            URL.revokeObjectURL(url);
         }
 
+        // 导入提取
         function importNotes(event) {
             const file = event.target.files[0];
+            if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
+                    // 合并并去重
                     notes = [...imported, ...notes];
                     const uniqueIds = new Set();
                     notes = notes.filter(n => uniqueIds.has(n.id) ? false : uniqueIds.add(n.id));
                     localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
                     renderNotes(notes);
-                } catch (err) { alert('加载失败'); }
+                    alert('灵感已成功提取');
+                } catch (err) {
+                    alert('加载失败，请检查文件格式');
+                }
             };
             reader.readAsText(file);
         }
