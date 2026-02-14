@@ -9,13 +9,11 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f2ece9%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23b58d88%22>EB</text></svg>">
 
     <style>
-        /* 默认色已替换为暮色玫瑰 */
         :root { --bg-color: #f2ece9; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #b58d88; }
-        
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STSong', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 50px; overflow-x: hidden; }
         
-        .header-container { margin-top: 40px; width: 92%; max-width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .header-container { margin-top: 40px; width: 92%; max-width: 600px; text-align: center; }
         .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 25px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
 
         .search-bar { width: 100%; margin-bottom: 20px; }
@@ -36,7 +34,9 @@
         .label-tag { font-size: 11px; padding: 6px 14px; border-radius: 15px; background: rgba(0,0,0,0.03); cursor: pointer; border: 1px solid transparent; transition: 0.3s; color: #777; }
         .label-tag.active { background: var(--accent-color); color: white; }
 
-        .post-btn { align-self: flex-end; background: var(--accent-color); color: white; border: none; padding: 12px 35px; border-radius: 20px; font-size: 13px; letter-spacing: 1px; cursor: pointer; }
+        .btn-group { display: flex; justify-content: flex-end; gap: 10px; }
+        .post-btn { background: var(--accent-color); color: white; border: none; padding: 12px 30px; border-radius: 20px; font-size: 13px; letter-spacing: 1px; cursor: pointer; }
+        .cancel-btn { background: rgba(0,0,0,0.05); color: #777; border: none; padding: 12px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; display: none; }
 
         .gallery { display: flex; flex-direction: column; gap: 18px; width: 92%; max-width: 600px; margin-top: 35px; }
         .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 22px; border: 1px solid rgba(255,255,255,0.3); position: relative; }
@@ -44,19 +44,22 @@
         .card-meta { display: flex; flex-direction: column; gap: 4px; }
         .card-date { font-size: 11px; color: var(--accent-color); letter-spacing: 0.5px; opacity: 0.8; }
         .card-tag { font-size: 9px; padding: 2px 8px; background: rgba(0,0,0,0.05); border-radius: 8px; color: #999; align-self: flex-start; }
+        
+        /* 辅助按钮组（复制、编辑、删除） */
+        .action-btns { display: flex; gap: 12px; color: var(--accent-color); opacity: 0.6; }
+        .action-icon { cursor: pointer; font-size: 13px; padding: 4px; }
+        .action-icon:hover { opacity: 1; }
+
         .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; color: #444; }
-        .delete-btn { opacity: 0.2; font-size: 14px; padding: 2px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header-container">
         <h1 class="main-title">Esther's Box</h1>
-        
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="搜索记忆碎片..." oninput="filterNotes()">
         </div>
-
         <div class="toolbar">
             <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
             <button class="tool-btn" onclick="setTheme('default')">经典驼</button>
@@ -75,7 +78,10 @@
             <div class="label-tag" onclick="selectTag(this)">旋律工坊</div>
             <div class="label-tag" onclick="selectTag(this)">审美档案</div>
         </div>
-        <button class="post-btn" onclick="saveNote()">POST</button>
+        <div class="btn-group">
+            <button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()">取消修改</button>
+            <button id="postBtn" class="post-btn" onclick="saveNote()">POST</button>
+        </div>
     </div>
 
     <div id="gallery" class="gallery"></div>
@@ -83,6 +89,8 @@
     <script>
         let notes = JSON.parse(localStorage.getItem('esthers_box_notes')) || [];
         let currentTag = "碎碎念";
+        let editId = null; // 用于追踪正在编辑的卡片
+
         renderNotes(notes);
 
         function selectTag(el) {
@@ -94,11 +102,61 @@
         function saveNote() {
             const input = document.getElementById('noteInput');
             if (!input.value.trim()) return;
-            const newNote = { id: Date.now(), content: input.value, tag: currentTag, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
-            notes.unshift(newNote);
+
+            if (editId) {
+                // 更新现有笔记
+                const index = notes.findIndex(n => n.id === editId);
+                if (index !== -1) {
+                    notes[index].content = input.value;
+                    notes[index].tag = currentTag;
+                }
+                editId = null;
+                document.getElementById('postBtn').innerText = 'POST';
+                document.getElementById('cancelBtn').style.display = 'none';
+            } else {
+                // 创建新笔记
+                const newNote = { id: Date.now(), content: input.value, tag: currentTag, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
+                notes.unshift(newNote);
+            }
+
             localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
             input.value = '';
             renderNotes(notes);
+        }
+
+        function editNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            
+            editId = id;
+            const input = document.getElementById('noteInput');
+            input.value = note.content;
+            input.focus();
+
+            // 自动同步标签
+            const tags = document.querySelectorAll('.label-tag');
+            tags.forEach(t => {
+                if (t.innerText === note.tag) {
+                    selectTag(t);
+                }
+            });
+
+            document.getElementById('postBtn').innerText = 'UPDATE';
+            document.getElementById('cancelBtn').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editId = null;
+            document.getElementById('noteInput').value = '';
+            document.getElementById('postBtn').innerText = 'POST';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        function copyNote(content) {
+            navigator.clipboard.writeText(content).then(() => {
+                alert('灵感已复制到剪贴板 ✨');
+            });
         }
 
         function filterNotes() {
@@ -119,7 +177,11 @@
                             <div class="card-date">${note.date}</div>
                             <div class="card-tag">${note.tag}</div>
                         </div>
-                        <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
+                        <div class="action-btns">
+                            <span class="action-icon" title="复制" onclick="copyNote(\`${note.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)">📋</span>
+                            <span class="action-icon" title="编辑" onclick="editNote(${note.id})">✎</span>
+                            <span class="action-icon" title="删除" onclick="deleteNote(${note.id})">✕</span>
+                        </div>
                     </div>
                     <div class="card-content">${note.content}</div>
                 </div>
@@ -127,7 +189,7 @@
         }
 
         function deleteNote(id) {
-            if(confirm('要删除这段灵感吗？')) {
+            if(confirm('要撕掉这段灵感吗？')) {
                 notes = notes.filter(note => note.id !== id);
                 localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
                 renderNotes(notes);
