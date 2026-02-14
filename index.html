@@ -16,20 +16,27 @@
         .header-container { margin-top: 40px; width: 90%; max-width: 600px; text-align: center; }
         .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 20px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
 
-        /* 搜索框样式 */
+        /* 搜索框：回归并优化 */
         .search-bar { width: 90%; max-width: 600px; margin-bottom: 20px; }
-        .search-bar input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(0,0,0,0.05); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color); outline: none; font-size: 14px; }
+        .search-bar input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(0,0,0,0.05); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color); outline: none; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
         .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
         .tool-btn { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.08); padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; color: var(--text-color); backdrop-filter: blur(5px); }
 
         .input-card { width: 90%; max-width: 600px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
         textarea { width: 100%; height: 100px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        
+        .tag-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+        .label-tag { font-size: 11px; padding: 6px 14px; border-radius: 15px; background: rgba(0,0,0,0.03); cursor: pointer; border: 1px solid transparent; transition: 0.3s; color: #777; }
+        .label-tag.active { background: var(--accent-color); color: white; }
+
         .post-btn { align-self: flex-end; background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 18px; font-size: 13px; cursor: pointer; }
 
         .gallery { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 600px; margin-top: 30px; }
         .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; }
-        .card-date { font-size: 11px; color: var(--accent-color); margin-bottom: 10px; letter-spacing: 1px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .card-date { font-size: 11px; color: var(--accent-color); letter-spacing: 1px; }
+        .card-tag { font-size: 9px; padding: 2px 8px; background: rgba(0,0,0,0.05); border-radius: 8px; color: #999; }
         .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
         .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.2; font-size: 14px; }
     </style>
@@ -40,21 +47,27 @@
         <h1 class="main-title">Esther's Box</h1>
         
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="搜索你的碎片记忆..." oninput="filterNotes()">
+            <input type="text" id="searchInput" placeholder="搜索记忆中的碎碎念或剧本细节..." oninput="filterNotes()">
         </div>
 
         <div class="toolbar">
             <button class="tool-btn" onclick="setTheme('default')">经典驼</button>
             <button class="tool-btn" onclick="setTheme('lagoon')">泻湖蓝</button>
             <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
-            <button class="tool-btn" onclick="exportNotes()" style="background: var(--accent-color); color: white; border:none;">💾 导出</button>
-            <button class="tool-btn" onclick="document.getElementById('fileInput').click()" style="background: var(--accent-color); color: white; border:none;">📥 导入</button>
+            <button class="tool-btn" onclick="exportNotes()" style="background: var(--accent-color); color: white; border:none;">💾 存档</button>
+            <button class="tool-btn" onclick="document.getElementById('fileInput').click()" style="background: var(--accent-color); color: white; border:none;">📥 提取</button>
             <input type="file" id="fileInput" style="display:none" onchange="importNotes(event)">
         </div>
     </div>
 
     <div class="input-card">
         <textarea id="noteInput" placeholder="在此刻，捕捉那些流动的灵感..."></textarea>
+        <div class="tag-picker" id="tagPicker">
+            <div class="label-tag active" onclick="selectTag(this)">碎碎念</div>
+            <div class="label-tag" onclick="selectTag(this)">营造人间</div>
+            <div class="label-tag" onclick="selectTag(this)">旋律工坊</div>
+            <div class="label-tag" onclick="selectTag(this)">审美档案</div>
+        </div>
         <button class="post-btn" onclick="saveNote()">POST</button>
     </div>
 
@@ -62,12 +75,19 @@
 
     <script>
         let notes = JSON.parse(localStorage.getItem('esthers_box_notes')) || [];
+        let currentTag = "碎碎念";
         renderNotes(notes);
+
+        function selectTag(el) {
+            document.querySelectorAll('.label-tag').forEach(tag => tag.classList.remove('active'));
+            el.classList.add('active');
+            currentTag = el.innerText;
+        }
 
         function saveNote() {
             const input = document.getElementById('noteInput');
             if (!input.value.trim()) return;
-            const newNote = { id: Date.now(), content: input.value, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
+            const newNote = { id: Date.now(), content: input.value, tag: currentTag, date: new Date().toLocaleString('zh-CN', { hour12: false }) };
             notes.unshift(newNote);
             localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
             input.value = '';
@@ -76,7 +96,10 @@
 
         function filterNotes() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = notes.filter(note => note.content.toLowerCase().includes(searchTerm));
+            const filtered = notes.filter(note => 
+                note.content.toLowerCase().includes(searchTerm) || 
+                note.tag.toLowerCase().includes(searchTerm)
+            );
             renderNotes(filtered);
         }
 
@@ -85,7 +108,10 @@
             gallery.innerHTML = data.map(note => `
                 <div class="card">
                     <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
-                    <div class="card-date">${note.date}</div>
+                    <div class="card-header">
+                        <div class="card-date">${note.date}</div>
+                        <div class="card-tag">${note.tag}</div>
+                    </div>
                     <div class="card-content">${note.content}</div>
                 </div>
             `).join('');
@@ -111,19 +137,15 @@
         }
 
         function exportNotes() {
-            if (notes.length === 0) return;
             const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(blob);
             a.download = `Esthers_Box_Backup.json`;
             a.click();
-            URL.revokeObjectURL(url);
         }
 
         function importNotes(event) {
             const file = event.target.files[0];
-            if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -133,7 +155,7 @@
                     notes = notes.filter(n => uniqueIds.has(n.id) ? false : uniqueIds.add(n.id));
                     localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
                     renderNotes(notes);
-                } catch (err) { alert('格式不对哦'); }
+                } catch (err) { alert('数据格式不对哦'); }
             };
             reader.readAsText(file);
         }
