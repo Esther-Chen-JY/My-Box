@@ -5,40 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Esther's Box</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23a89a8e%22>EB</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f2ece9%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23b58d88%22>EB</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f2ece9%22/><text y=%22.9em%22 font-size=%2280%22 font-family=%22serif%22 fill=%22%23b58d88%22>EB</text></svg>">
 
     <style>
-        :root { --bg-color: #f4f1ea; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #a89a8e; }
+        /* 默认色已替换为暮色玫瑰 */
+        :root { --bg-color: #f2ece9; --glass-bg: rgba(255, 255, 255, 0.4); --text-color: #5a5a5a; --accent-color: #b58d88; }
+        
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STSong', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 50px; }
+        body { background: var(--bg-color); color: var(--text-color); font-family: 'PingFang SC', 'STSong', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: all 0.5s ease; padding-bottom: 50px; overflow-x: hidden; }
         
-        .header-container { margin-top: 40px; width: 90%; max-width: 600px; text-align: center; }
-        .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 20px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
+        .header-container { margin-top: 40px; width: 92%; max-width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .main-title { font-size: 26px; letter-spacing: 5px; color: var(--text-color); margin-bottom: 25px; text-transform: uppercase; font-weight: normal; font-family: 'STSong', serif; }
 
-        /* 搜索框：回归并优化 */
-        .search-bar { width: 90%; max-width: 600px; margin-bottom: 20px; }
-        .search-bar input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(0,0,0,0.05); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color); outline: none; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .search-bar { width: 100%; margin-bottom: 20px; }
+        .search-bar input { width: 100%; padding: 14px 20px; border-radius: 25px; border: 1px solid rgba(0,0,0,0.05); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-color); outline: none; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
-        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
-        .tool-btn { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.08); padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; color: var(--text-color); backdrop-filter: blur(5px); }
-
-        .input-card { width: 90%; max-width: 600px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
-        textarea { width: 100%; height: 100px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        .toolbar { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
+        .tool-btn { background: var(--glass-bg); border: 1px solid rgba(0,0,0,0.08); padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; color: var(--text-color); backdrop-filter: blur(5px); white-space: nowrap; flex-grow: 1; max-width: calc(33% - 8px); text-align: center; }
         
-        .tag-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+        @media (max-width: 480px) {
+            .tool-btn { max-width: calc(50% - 8px); }
+            .tool-btn.func-btn { background: var(--accent-color); color: white; border: none; }
+        }
+
+        .input-card { width: 92%; max-width: 600px; background: var(--glass-bg); backdrop-filter: blur(10px); padding: 22px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 15px; }
+        textarea { width: 100%; height: 110px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-color); resize: none; font-family: inherit; line-height: 1.6; }
+        
+        .tag-picker { display: flex; gap: 8px; flex-wrap: wrap; }
         .label-tag { font-size: 11px; padding: 6px 14px; border-radius: 15px; background: rgba(0,0,0,0.03); cursor: pointer; border: 1px solid transparent; transition: 0.3s; color: #777; }
         .label-tag.active { background: var(--accent-color); color: white; }
 
-        .post-btn { align-self: flex-end; background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 18px; font-size: 13px; cursor: pointer; }
+        .post-btn { align-self: flex-end; background: var(--accent-color); color: white; border: none; padding: 12px 35px; border-radius: 20px; font-size: 13px; letter-spacing: 1px; cursor: pointer; }
 
-        .gallery { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 600px; margin-top: 30px; }
-        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .card-date { font-size: 11px; color: var(--accent-color); letter-spacing: 1px; }
-        .card-tag { font-size: 9px; padding: 2px 8px; background: rgba(0,0,0,0.05); border-radius: 8px; color: #999; }
-        .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
-        .delete-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.2; font-size: 14px; }
+        .gallery { display: flex; flex-direction: column; gap: 18px; width: 92%; max-width: 600px; margin-top: 35px; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: 18px; padding: 22px; border: 1px solid rgba(255,255,255,0.3); position: relative; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-meta { display: flex; flex-direction: column; gap: 4px; }
+        .card-date { font-size: 11px; color: var(--accent-color); letter-spacing: 0.5px; opacity: 0.8; }
+        .card-tag { font-size: 9px; padding: 2px 8px; background: rgba(0,0,0,0.05); border-radius: 8px; color: #999; align-self: flex-start; }
+        .card-content { font-size: 15px; line-height: 1.7; white-space: pre-wrap; color: #444; }
+        .delete-btn { opacity: 0.2; font-size: 14px; padding: 2px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -47,21 +54,21 @@
         <h1 class="main-title">Esther's Box</h1>
         
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="搜索记忆中的碎碎念或剧本细节..." oninput="filterNotes()">
+            <input type="text" id="searchInput" placeholder="搜索记忆碎片..." oninput="filterNotes()">
         </div>
 
         <div class="toolbar">
+            <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
             <button class="tool-btn" onclick="setTheme('default')">经典驼</button>
             <button class="tool-btn" onclick="setTheme('lagoon')">泻湖蓝</button>
-            <button class="tool-btn" onclick="setTheme('rose')">暮色玫瑰</button>
-            <button class="tool-btn" onclick="exportNotes()" style="background: var(--accent-color); color: white; border:none;">💾 存档</button>
-            <button class="tool-btn" onclick="document.getElementById('fileInput').click()" style="background: var(--accent-color); color: white; border:none;">📥 提取</button>
+            <button class="tool-btn func-btn" onclick="exportNotes()">💾 存档</button>
+            <button class="tool-btn func-btn" onclick="document.getElementById('fileInput').click()">📥 提取</button>
             <input type="file" id="fileInput" style="display:none" onchange="importNotes(event)">
         </div>
     </div>
 
     <div class="input-card">
-        <textarea id="noteInput" placeholder="在此刻，捕捉那些流动的灵感..."></textarea>
+        <textarea id="noteInput" placeholder="捕捉此刻流动的灵感..."></textarea>
         <div class="tag-picker" id="tagPicker">
             <div class="label-tag active" onclick="selectTag(this)">碎碎念</div>
             <div class="label-tag" onclick="selectTag(this)">营造人间</div>
@@ -107,10 +114,12 @@
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = data.map(note => `
                 <div class="card">
-                    <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
                     <div class="card-header">
-                        <div class="card-date">${note.date}</div>
-                        <div class="card-tag">${note.tag}</div>
+                        <div class="card-meta">
+                            <div class="card-date">${note.date}</div>
+                            <div class="card-tag">${note.tag}</div>
+                        </div>
+                        <span class="delete-btn" onclick="deleteNote(${note.id})">✕</span>
                     </div>
                     <div class="card-content">${note.content}</div>
                 </div>
@@ -128,19 +137,20 @@
         function setTheme(theme) {
             const root = document.documentElement;
             const themes = {
+                rose: { bg: '#f2ece9', accent: '#b58d88' },
                 default: { bg: '#f4f1ea', accent: '#a89a8e' },
-                lagoon: { bg: '#e8f0f2', accent: '#7a96a2' },
-                rose: { bg: '#f2ece9', accent: '#b58d88' }
+                lagoon: { bg: '#e8f0f2', accent: '#7a96a2' }
             };
             root.style.setProperty('--bg-color', themes[theme].bg);
             root.style.setProperty('--accent-color', themes[theme].accent);
         }
 
         function exportNotes() {
+            if (notes.length === 0) return;
             const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Esthers_Box_Backup.json`;
+            a.download = `Esthers_Box_Archive.json`;
             a.click();
         }
 
@@ -155,7 +165,7 @@
                     notes = notes.filter(n => uniqueIds.has(n.id) ? false : uniqueIds.add(n.id));
                     localStorage.setItem('esthers_box_notes', JSON.stringify(notes));
                     renderNotes(notes);
-                } catch (err) { alert('数据格式不对哦'); }
+                } catch (err) { alert('加载失败'); }
             };
             reader.readAsText(file);
         }
